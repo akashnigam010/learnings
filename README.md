@@ -1,2 +1,1 @@
-# learnings
-Learnings
+# Learnings and Notes
