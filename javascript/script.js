@@ -33,7 +33,7 @@ if (john.calcBMI() > mark.calcBMI()) {
 
 // Tip Calculator
 
-var johnVisit = {
+/*var johnVisit = {
 	bills: [124, 48, 268, 180, 42],
 	tips: [],
 	finals: [],
@@ -95,7 +95,13 @@ markVisit.finalCalc();
 johnVisit.averageTip = calculateAverageTip(johnVisit.tips);
 console.log(johnVisit);
 markVisit.averageTip = calculateAverageTip(markVisit.tips);
-console.log(markVisit);
+console.log(markVisit);*/
+
+function hello() {
+	console.log('Hi');
+}
+
+hello();
 
 
 
