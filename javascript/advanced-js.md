@@ -10,7 +10,7 @@ Constructor/Prototype
 Prototype property
 ---
 
-- Inheritenct in Javascript is possible because of the prototype property that every object in javascript has
+- Inheritence in Javascript is possible because of the prototype property that every object in javascript has
 - A prototype property in a constructor/Prototype (defined above) is not the prototype property of the constructor itself, but of all the objects that are instantiated through it. Meaning, all the instances created from this constructor will have this prototype property
 - We keep all the methods and properties in the prototype property of an object that we want other objects to inherit from this object.
 - Every object we create is an instance of `Object` constructor.
