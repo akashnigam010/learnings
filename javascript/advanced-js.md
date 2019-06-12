@@ -177,3 +177,189 @@ ob1.age = 23;
 console.log(ob1.age);		// logs 23
 console.log(ob2.age);		// logs 23 - ob2 held the reference of ob1, therefore mutation affected its value
 ```
+
+First class functions
+---
+
+- A function is an instance of Object type
+- A function behaves like an object
+- We can store a function in an object
+- We can pass a function as an argument to a function
+- We can return a function from a function
+- This is why we have first class functions!
+
+Ex: Passing as arguments
+
+```
+function calcArray(arr, fn) {				// generic function
+	var arrRes = [];
+	for (var i=0; i<arr.length; i++) {
+		arrRes.push(fn(arr[i]));
+	}
+}
+
+function calcAge(el) {						// callback function to calculate age
+	return 2019 - el;
+}
+
+function isFullAge(el) {					// callback function to calculate isFull age
+	return el >= 18;
+}
+
+var years = [1990, 2001, 1967];
+console.log(calcArray(years, calcAge));		// no parenthesis, since we are passing a callback function later by calcArray
+console.log(calcArray(years, isFullAge));	// no parenthesis, since we are passing a callback function later by calcArray
+```
+
+Ex: Returning functions
+
+```
+function interviewQuestion(job) {									// generic function
+	if (job === 'designer') {
+		return function(name) {										// returning a function
+			console.log(name + ', what is UX?');
+		}
+	} else if (job === 'teacher') {
+		return function(name) {
+			console.log(name + ', what is teaching?');
+		} 
+	} else {
+		return function(name) {
+			console.log('Hello ' + name + ', what do you do?');
+		}
+	}
+}
+
+var teacherQuestion = interviewQuestion('teacher');					// similar to function expression
+teacherQuestion('Akash');											// Akash, what is teaching?
+
+interviewQuestion('designer')('Mark');								// Mark, what is UX?
+```
+
+IIFE: Immediately Invoked Function Expressions
+---
+
+- We declare a function `function func() { ... }` and invoke it by `func()`
+- If we make use of IIFE, we don't have to declare and call separately, we do it in one go.
+Ex: Normal Function
+```
+function func() {					// declaration
+	var score = Math.random();
+	console.log(score);
+}
+func();								// call
+```
+Using IIFE:
+```
+(function func() {					// declaration and call = IIFE
+	var score = Math.random();
+	console.log(score);
+})();
+```
+Using arguments:
+```
+(function func(el) {					// declaration and call = IIFE
+	var score = Math.random();
+	console.log(score, el);
+})(3);
+
+console.log(score);						// error! -> score is protected in IIFE
+```
+
+- So we get immediate invoking in IIFE
+- We get data privacy as well
+- No interference with global execution context
+- Can not be reused - majorly for data privacy
+
+Closures
+---
+
+- An inner function always has access to outer function's arguments and variables even after the outer function has returned/stopped execution.
+
+Ex:
+```
+function hello(country) {									// outer function argument
+	var msg = "Good Morning";								// outer function variable
+	return function(wish) {									// inner function with arg
+		console.log(msg + " " + country + ". " + wish);		// inner function makes use of outer function's args and vars
+	}
+}
+
+var indiaHello = hello('India');							// outer function returned
+indiaHello('Namaste!');										// logs: Good Morning India. Namaste!. Inner function still able to make 																// use of outer function's args and vars
+```
+
+- When the function hello() returns, the execution context of this function is popped out of the execution stack
+- But the Variable Object and the Scope chain of hello() still remains in memory and can be acessed by inner function
+- When inner function is called, a new execution context is created for it on the execution stack
+- And since it is writtem lexically, it gets the VO of the outer hello function and thus access to its vars and args
+- The inner function's execution context has closed-in on outer function's VO, and that is why it is called CLOSURE!
+
+Bind, Call and Apply
+---
+
+- Functions are objects and they come loaded with few methods of their own like Bind, Call and Apply
+
+**Bind**
+
+- Bind is used return a PRESET function. 
+- Meaning, a bind-ed function can be called without explicitly setting the arguments.
+Ex:
+```
+var john = {
+	name: 'john',
+	age: 28,
+	present: function(style, time) {
+		if (style === 'formal') {
+			console.log('Hello! I am' + this.name + 'have a good' + time);
+		} else {
+			console.log('Wassup people! I am' + this.name + 'have a good' + time);
+		}
+	}
+};
+
+var johnFormal = john.present.bind(john, 'formal');
+johnFormal('morning');								// logs Hello! I am John have a good morning
+```
+- Bind method returns a function, store in a var
+- First argument of `present` function preset to 'formal'
+- The first argument of a bind method is a `this` variable.
+
+**Call**
+
+- The method `call` invokes the function and allows you to pass in arguments one by one using commas.
+Ex:
+
+```
+function greeting(text) {
+    console.log(text, this.name);
+}
+var customer1 = { name: 'Leo' };
+var customer2 = { name: 'Nat' };
+
+greeting.call(customer1, 'Hello');				// logs Hello! Leo
+greeting.call(customer2, 'Hello');				// logs Hello! Nat
+```
+- The first argument to a `call` method is a `this` variable.
+
+**Apply**
+
+- The method `apply` invokes the function and allows you to pass in arguments as an array
+Ex:
+
+```
+function greeting(text1, text2) {
+   console.log(text1 + " " + this.name + " " +text2);
+}
+
+var customer1 = { name: 'Leo' };
+var customer2 = { name: 'Nat' };
+
+greeting.call(customer1, ['Hello', 'How are you?']);				// logs Hello! Leo How are you?
+greeting.call(customer2, ['Hello', 'How are you?']);				// logs Hello! Nat How are you?
+
+```
+- The first argument to a `apply` method is a `this` variable.
+
+- Call and Apply are interchangable and we can decide what to use - comma based args or array based
+- Bind always returns a function which nees to be called later.
