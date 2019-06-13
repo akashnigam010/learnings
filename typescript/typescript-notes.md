@@ -339,7 +339,7 @@ And this is so cool
 console.log(message);				// logs a multiline string -> Hello! This is Akash. And this is so cool
 ```
 
-Classes with Typescript
+Classes in Typescript
 ---
 
 - `public, private, protected` access modifiers are part of TS and work like any other OOPs language
@@ -539,3 +539,273 @@ console.log(circum(2));					// logs circumference
 **ES6 import style**
 - Instead of `import {PI, circum} from './circle';`, we can use `import * as Circle from './circle';` (with an alias)
 - And then use the alias to call functions/constants like `console.log(Circle.PI)`
+
+Namespace vs Modules
+---
+
+**Namespaces**:
+- Logical grouping in different JS Objects (namespace)
+- No need of module loader
+- No need to explicitly import them
+- Difficult in large apps
+
+**Modules** 
+- Organize with real modules
+- Function/constants in more than one files
+- Module loader required as they are not supported by browsers yet out of the box
+- Explicit import statements
+- Easy to scale
+
+Interfaces in TS
+---
+
+- Interfaces are a way to guarantee your code that certain methods or properties are available
+- They form a contract, which needs to be followed by the code.
+
+Ex: Without interface
+```
+function greet(person: {name: string}) {		
+	console.log('Hello ' + person.name);
+}
+
+function changeName(person: {name: string}) {		
+	person.name = 'Anna';
+}
+
+const person = {
+	name: 'Max',
+	age: 27
+}
+greet(person);								// logs Hello Max
+changeName(person);
+```
+- In the above example, we created a contract on greet() & changeName() header saying that the arg needs to have a name of type string
+- And therefore, the caller needs to pass an object that has a `name` property of type string
+- However, if we want to change the name to firstName, we will have to modify our caller as well as both the function code.
+- To prevent this, we can make use of interfaces
+
+Ex: With interface
+```
+interface NamedPerson {
+	name: string;
+}
+function greet(person: NamedPerson) {		
+	console.log('Hello ' + person.name);
+}
+
+function changeName(person: NamedPerson) {		
+	person.name = 'Anna';
+}
+
+const person: NamedPerson = {
+	name: 'Max'
+	age: 27
+}
+greet(person);								// logs Hello Max
+changeName(person);
+```
+
+**IMPORTANT**
+- In case, an object literal is passed directly to the above functions, the object literal is checked more strictly than a regular object.
+- Meaning if we do:
+```
+greet({name: 'Max', age: 27});
+```
+- We get a compile time error saying, that the object literal can not have an `age` (since the contract doesn't define such a property)
+- However, the same works for regular object `person` having such property.
+- This is an additional check performed by TS.
+- We can add a property `age` in the interface to make this work
+- We can also mark this property as `optional` with a `?` in the interface
+
+```
+interface NamedPerson {
+	name: string;
+	age?: number;
+}
+```
+
+- When the name of the property is not known, TS provides a way to include such property in the interface too.
+```
+interface NamedPerson {
+	name: string;
+	age?: number;
+	[propName: string]: number;
+}
+```
+- The above means that there will be a property of type number. (flexible keyname)
+- Difference between this and `age` property is that the name of the `age` will have to be `age` only.
+- Whereas the other one could have any name but `number` type
+
+**Methods in Interfaces**
+```
+interface NamedPerson {
+	name: string;
+	greet(lastName: string): void;
+}
+
+const person: NamedPerson {
+	name: 'Max',
+	greet(lastName: string): {
+		console.log(lastName);
+	}
+}
+```
+
+Interfaces with classes
+---
+
+- We can create classes which implement interfaces
+```
+interface NamedPerson {
+	name: string;
+	greet(lastName: string): void;
+}
+
+class Person implements NamedPerson {
+	name: string;
+	greet(lastName: string) {
+		console.log('Hello ' + lastName);
+	}
+}
+
+const person = new Person();
+person.greet('Nigam');
+```
+
+Interface with Function Type
+---
+
+- We can use an interface to define the contract for the type of a function
+- Menaing, whichever function is of this interface, must follow this contract
+
+```
+interface DoubleFunc {
+	(number1: number, number2: number): number;
+}
+
+let myFunc: DoubleFunc;
+myFunc = function(val1: number, val2: number) {
+	return (val1 + val2) * 2;
+}
+```
+
+- The function `myFunc` follows the contract defined by the interface `DoubleFunc`
+
+Interface Inheritence
+---
+
+- Just like class, interfaces can be extended too
+```
+interface NamedPerson {
+	name: string;
+	age?: number;
+	greet(lastName: string): void;
+}
+
+interface AgedPerson extends NamedPerson {
+	age: number;
+}
+```
+- In the `AgedPerson` interface, the `age` property is a required property as opposed to it being optional in the `NamedPerson` interface.
+
+```
+const oldPerson: AgedPerson {
+	name: 'Old Person',
+	age: 28,
+	greet(lastName: string) {
+		console.log(lastName);
+	}
+}
+```
+- The object oldPerson needs to have `name, age and greet()` in order to follow the contract
+
+What happens when Interfaces get compiled
+---
+
+- Interfaces do not get compiled to JS.
+- They only do the job of contract checking and compile time errors but do not make it to the final JS.
+
+Generics
+---
+
+- At times, we want to make a generic function so we can make use of `any`
+- But the compiler wouldn't know what type of data is being passed/retured and thus leading to errors at runtime.
+Ex:
+```
+function echo(data: any) { 					// generic function, arg as any type
+	return data;
+}
+
+console.log(echo('Akash'));					// logs Akash
+console.log(echo('Akash').length);			// logs 5
+console.log(echo(27));						// logs 27
+console.log(echo(27).length);				// logs undefined
+```
+- And this is where the problem is
+- Since the data being returned could be `any`, TS would not give compile time error if a `length` is called on a `number`.
+- So keep the generic nature of this method and also let TS tell us compile time errors for such scenarios, we use Generic
+
+Ex:
+```
+function echo<T>(data: T) {
+	return data;
+}
+
+console.log(echo('Akash').length);			// logs 5
+console.log(echo(27));						// logs 27
+console.log(echo(27).length);				// compile time error
+```
+
+- In the above example, TS is able to infer the type of the data returned from the echo function based on the type of the argument
+- And therefore, calling `length` on a `number` produces compile time error
+- We can also force the type during function call
+```
+console.log(echo<number>('27'));						// compile time error - number expected, string passed
+```
+
+Built-in generics
+---
+
+- Array
+```
+let arr: Array<number> = [1, 2, 3];
+arr.push(27);			// works
+arr.push('27');			// error
+```
+
+- Generic array
+```
+function printAll<T>(arr: T[]) {
+	arr.forEach(el => console.log(el));
+}
+
+printAll<string>(['apples', 'oranges']);		// logs [ apples, oranges ]
+printAll<number>([1, 2, 3]);					// logs [ 1, 2, 3 ]
+```
+
+Generic Types
+---
+
+- We can create a generic type to be assigned to a variable/constant
+```
+const a: <T>(data: T) => T;
+```
+- Meaning, a constant `a` is a generic type `function`, that takes in an argument of type `T` and returns a value of type `T`;
+
+Generic Classes
+---
+
+```
+class SimpleMath<T extends number> {
+	a: T;
+	b: T;
+	calculate(): number {
+		return this.a * this.b;
+	}
+}
+
+let ob = new SimpleMath<number>();
+ob.a = 20;
+ob.b = 30;
+console.log(ob.calculate());			// logs 600
+```
