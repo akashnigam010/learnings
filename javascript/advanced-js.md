@@ -15,6 +15,11 @@ Prototype property
 - We keep all the methods and properties in the prototype property of an object that we want other objects to inherit from this object.
 - Every object we create is an instance of `Object` constructor.
 
+**Important**
+
+`__proto__` is the actual object that is used in the lookup chain to resolve methods, etc
+`prototype` is the object that is used to build __proto__ when you create an object with `new`
+
 Prototype Chaining
 ---
 
