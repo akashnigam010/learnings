@@ -233,21 +233,43 @@ ES6 and Typescript
 Arrow Functions (ES6)
 ---
 
-Traditional JS
+Arrow functions provide 2 huge benefits over traditional anonymous functions 
+
+- *Less verbose* - syntax upgrade
 ```
-const multiply = function(val1, val2) {
-	return val1 * val2;
+// traditional function
+const sum = function(a, b) {
+	return a + b;
 }
 
-multiply(1, 4);
+// arrow function
+const sum = (a, b) => (a+b);
 ```
 
-Using ES6 Arrow function
+- *Context Binding* : they have `this` lexical binding. Meaning, they take the `this` from their surrounding, so that we don't have to `bind()` or do 
+`const that = this;`
 ```
-const multiply = (val1, val2) =>	return val1 * val2;
+// traditional JS
+Person.prototype.get = function(res) {
+	const that = this;							// Promise will have a different this, therefore, saving the this using that const
+	return new Promise(function() {
+		http.get(that.url, function(data) {
+			resolve(data);
+		})
+	});
+}
 
-multiply(1, 4);
+// arrow function
+Person.prototype.get = function(res) {
+	return new Promise((resolve, reject) => {		// no such need to store this now, this in Promise is now that of the get method
+		http.get(this.url, function(data) {
+			resolve(data);
+		})
+	});
+}
 ```
+
+Pitfalls of arrow functions : https://medium.com/tfogo/advantages-and-pitfalls-of-arrow-functions-a16f0835799e
 
 In typescript
 ```
