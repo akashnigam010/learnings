@@ -42,7 +42,98 @@ Prototype Chaining
 	```
 	var john = new Person('John', 28, 'Designer');
 	```
-- **Important** : The `new` keyword would take care to create a `NEW EMPTY OBJECT` and then instantiate it with Person properties, thus taking care of the global execution object `window` getting initialized with john's properties
+**Important**
+
+- The `new` keyword would take care to create a `NEW EMPTY OBJECT` and then instantiate it with Person properties, thus taking care of the global execution object `window` getting initialized with john's properties
+
+- When calling a function constructor without new keyword, `this` will refer to global context
+Ex:
+```
+var Person = function() {
+	console.log(this);
+}
+Person();					// logs Window
+```
+- When calling with `new`, `this` referes to current context object
+Ex:
+```
+var Person = function() {
+	console.log(this);
+}
+
+var max = new Person();		// logs max object
+``` 
+
+Prototype vs Instance Methods
+---
+
+Having prototyped methods is more beneficial than having instance methods in Function Constructors because:
+
+1. Modifying a common method
+
+- Modifying a common method is fast and easy as compared to modifying it in each object. We can't change a common instance method in a function constructor, once it is defined. Ex:
+```
+var Person = function(name) {
+	this.name = name;
+	this.getAge = function {
+		return 28;
+	}
+}
+var max = new Person('Max');
+```
+Now if we wish to change the `getAge()` method, we can't change it with `Person` constructor function.
+```
+Person.getAge = function() { ... }		// we can't do this
+``` 
+In the above case, we have to override the function in max object
+```
+max.getAge = function() { ... }
+```
+- Instead of above, we can simply have the method as `prototype`, and then we can update the function whenever we wish
+```
+var Person = function(name) {
+	this.name = name;
+}
+Person.prototype.getAge = function() {
+	return 28;
+}
+var max = new Person('Max');
+
+// now change the function definition using prototype
+Person.prototype.getAge = function() {
+	return 333;
+}
+```
+
+2. Speed of processing
+
+- A prototype function is faster than an instance method because there is only one copy of the method and all the objects share it.
+- In case of instance method, each object gets a new copy of the method
+Ex:
+```
+var Person = function(name) {
+	this.name = name;
+	getAge = function() {
+		return 28;
+	}
+}
+
+var max = new Person('Max');
+var nina = new Person('Nina');
+// both max and nina get a copy of getAge()
+
+var Person2 = function(name) {
+	this.name = name;
+}
+
+Person2.prototype.getAge = function() {
+	return 28;
+}
+
+var max2 = new Person('Max');
+var nina2 = new Person('Nina');
+// this time, both max and nina get same copy of getAge, hence this is faster
+```
 
 Inheritence
 ---
