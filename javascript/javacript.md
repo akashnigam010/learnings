@@ -210,6 +210,103 @@ ES2019, ES2020						- Known an ESNext (future releases)
 									- Some features already supported in modern browsers
 									- Transpiling and polyfilling can be done here too for conversions to older versions
 
+ES2015 (ES6) features
+---
+
+**Arrow Functions (ES6)**
+
+Arrow functions provide 2 huge benefits over traditional anonymous functions 
+
+- *Less verbose* - syntax upgrade
+```
+// traditional function
+const sum = function(a, b) {
+	return a + b;
+}
+
+// arrow function
+const sum = (a, b) => (a+b);
+```
+
+- *Context Binding* : they have `this` lexical binding. Meaning, they take the `this` from their surrounding, so that we don't have to `bind()` or do 
+`const that = this;`
+
+Example using `const that = this`
+```
+// traditional JS
+Person.prototype.get = function(res) {
+	const that = this;							// Promise will have a different this, therefore, saving the this using that const
+	return new Promise(function() {
+		http.get(that.url, function(data) {
+			resolve(data);
+		})
+	});
+}
+
+// arrow function
+Person.prototype.get = function(res) {
+	return new Promise((resolve, reject) => {		// no such need to store this now, this in Promise is now that of the get method
+		http.get(this.url, function(data) {
+			resolve(data);
+		})
+	});
+}
+```
+Example using `bind` - function constructor
+```
+var john = function(name) {
+	this.name = name;
+	this.hello = function() {
+		console.log(this);				// logs john
+
+		setTimeout(function() {
+			console.log(this);			// logs window object
+		}, 1000);
+	}
+}
+```
+Fix with `bind`
+```
+var john = function(name) {
+	this.name = name;
+	this.hello = function() {
+		console.log(this);				// logs john
+
+		setTimeout(function() {
+			console.log(this);			// logs john
+		}.bind(this), 1000);
+	}
+}
+```
+Fix with arrow function
+```
+var john = function(name) {
+	this.name = name;
+	this.hello = function() {
+		console.log(this);				// logs john
+
+		setTimeout(() => {
+			console.log(this);			// logs john
+		}, 1000);
+	}
+}
+```
+
+**Pitfalls of arrow functions**
+
+- Arrow functions do not bind `this`, instead they use the `this` in their scope.
+- Arrow functions can't be used as instance methods, because they can't bind to the instance, and end up binding to the global instance
+```
+var john = {
+	name: 'Akash',
+	hello = () => {
+		console.log('hi');
+	}
+}
+```
+- Function expressions are best for object methods. Arrow functions are best for callbacks or methods like map, reduce, or forEach.
+- https://medium.com/tfogo/advantages-and-pitfalls-of-arrow-functions-a16f0835799e
+
 ES2018 Feature
 ---
 

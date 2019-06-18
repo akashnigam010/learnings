@@ -19,4 +19,29 @@ function hello() {
 	console.log(arr);
 }
 
-hello();
+var Person = function(name) {
+	this.name = name;
+	this.hello = function() {
+		console.log(this);				// logs john
+
+		setTimeout(() => {
+			console.log(this);			// logs john
+		}, 1000);
+	}
+}
+
+var ab = new Person('Akash');
+ab.hello();
+
+var john = {
+	name: 'John',
+	hello: function() {
+		console.log(this);
+
+		setTimeout(() => {
+			console.log(this);			
+		}, 1000);
+	}
+};
+
+john.hello();
