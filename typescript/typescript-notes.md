@@ -248,6 +248,8 @@ const sum = (a, b) => (a+b);
 
 - *Context Binding* : they have `this` lexical binding. Meaning, they take the `this` from their surrounding, so that we don't have to `bind()` or do 
 `const that = this;`
+
+Example using `const that = this`
 ```
 // traditional JS
 Person.prototype.get = function(res) {
@@ -266,6 +268,45 @@ Person.prototype.get = function(res) {
 			resolve(data);
 		})
 	});
+}
+```
+Example using `bind`
+```
+var john = function(name) {
+	this.name = name;
+	this.hello = function() {
+		console.log(this);				// logs john
+
+		setTimeout(function() {
+			console.log(this);			// logs window object
+		}, 1000);
+	}
+}
+```
+Fix with `bind`
+```
+var john = function(name) {
+	this.name = name;
+	this.hello = function() {
+		console.log(this);				// logs john
+
+		setTimeout(function() {
+			console.log(this);			// logs john
+		}.bind(this), 1000);
+	}
+}
+```
+Fix with arrao function
+```
+var john = function(name) {
+	this.name = name;
+	this.hello = function() {
+		console.log(this);				// logs john
+
+		setTimeout(() => {
+			console.log(this);			// logs john
+		}, 1000);
+	}
 }
 ```
 
