@@ -300,7 +300,7 @@ var john = function(name) {
 var john = {
 	name: 'Akash',
 	hello = () => {
-		console.log('hi');
+		console.log(this);				// logs window object
 	}
 }
 ```
@@ -690,6 +690,47 @@ mike.calcAge();										// logs Mike object and then logs 26
 - The above shows how this in calcAge in john object is replaced with this in mike, when borrowed
 - Meaning, the `this` object in a method gets assigned with a value only when the method is called/ran
 
+Event Loop
+---
+
+- Javascript is a single threaded language
+- JS uses `Event Loop` mechanism to handles anyc operations (ex timeout)
+
+**How it works**
+
+- It works on Event Table and Event Queue and Execution Stack
+- When it encounters any async operations, js adds it to the `Event table`
+- Once that event occurs (timeout, click, mouse move), Event Table sends the event to the `Event Queue`.
+- Event Table does not call the function, but only sends the notice to the Event Queue
+- `Event Queue` is simply queue datastructure, that only holds the events that need to be executed in the correct order (queue)
+- `Event Loop` is a constantly running process that checks if the `Execution Stack` is empty.
+- If it is empty, it checks the Event Queue for any pending events
+- If there are any events, they are moved to the Execution Stack, if not, nothing happens.
+
+Ex:
+```
+var john = {
+	name = 'John',
+	hello: function() {
+		console.log(1);
+
+		setTimeout(() => {
+			console.log(2)
+		}, 0);
+
+		for (let i = 0; i < 100000; i++) {
+			console.log(3);
+		}
+	}
+};
+
+// output
+1
+3 // 100000 times
+2
+```
+
+In above example, only when the execution stack got empty (for loop ran for 100000 times), only then the waiting event was executed
 
 DOM
 ---

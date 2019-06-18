@@ -420,6 +420,9 @@ johnFormal('morning');								// logs Hello! I am John have a good morning
 - Bind method returns a function, store in a var
 - First argument of `present` function preset to 'formal'
 - The first argument of a bind method is a `this` variable.
+- Bind is used to 
+	- preset a function.
+	- bind a method to a different object.
 
 **Call**
 

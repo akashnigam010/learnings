@@ -31,7 +31,7 @@ var Person = function(name) {
 }
 
 var ab = new Person('Akash');
-ab.hello();
+// ab.hello();
 
 var john = {
 	name: 'John',
@@ -39,8 +39,12 @@ var john = {
 		console.log(this);
 
 		setTimeout(() => {
-			console.log(this);			
-		}, 1000);
+			console.log(1);			
+		}, 0);
+
+		for (let i = 2; i<=1000; i++) {
+			console.log(2);
+		}
 	}
 };
 
