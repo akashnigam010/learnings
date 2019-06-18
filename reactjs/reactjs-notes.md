@@ -435,3 +435,153 @@ const deletePersonHandler = (index) => {
 	}
 	</div>
 ```
+
+Manipulate string chars
+---
+
+```
+const text = 'Hello World!',
+const arr = text.split(''); 		// converts to array
+```
+
+Dynamic Styling
+---
+
+- Change the class array dynamically and then assign that array with `join(' ')` to `style`
+Ex:
+```
+const classes = [];
+if (personsState.persons.length <= 2) {
+	classes.push('red');						// .red style in css class
+} 
+
+if (personsState.persons.length <= 1) {
+	classes.push('bold');						// .bold style in css class
+}
+
+<p className={classes.join(' ')}>Assignment Input</p>
+```
+
+Error Boundary
+---
+
+- When a component might throw some error (api call etc), use ErrorBoundary to wrap the component (HOC) to show custom message on the UI
+
+App Structure
+---
+
+- Keep the presentation components under `components` folder
+- Assets under `assets` folder
+- Smart components or container under `containers` folder
+- Functional components can ommit `return ()`, by simply making use of arrow function's direct notation
+
+Class vs Functional Components
+---
+
+- Class based comps can manage state and component lifecycle
+- Functional comps can't manage state until React 16, post to that they can manage state using `useState` lifecycle hook
+- Functional comps can't manage component lifecycle
+
+**Lifecycle Hooks are different thant React hooks**
+
+Component Lifecycle
+---
+
+**Creation**
+
+1. constructor(props)
+	- Called during comp construction.
+	- Set initial state
+	- Do not add code that causes side effect like making an http call etc
+	- If a constructor is added, `super(props)` need to be called.
+	- If no constructor is added, the above super call is made automatically by React
+
+2. static getDerivedStateFromProps(props, state)		// added in React 16.3
+	- When props of a comp change, and if you need to update the internal state, then use this hook
+	- Very rarely used
+	- No causing http calls etc
+
+3. render
+	- Prepare and return JSX
+	- No blocking operations (http, timeouts)
+
+4. Render child components
+	- All the child components will get rendered with their respective lifecycles
+	- Flow comes back to current component
+
+5. componentWillMount()
+	- Will be removed from future releases
+	- Not used anymore
+
+6. componentDidMount()
+	- Cause side effect - make http calls, timeouts
+	- Do not update state synchronously (it will trigged re-render cycle - affects performance)
+	- State can be updated async as a result of a promise (`then` block)
+
+7. componentWillUnmount()
+	- Called when component is about to be destructed
+
+**Updation**
+
+1. static getDerivedStateFromProps(props, state)		// added in React 16.3
+	- When props of a comp change, and if you need to update the internal state, then use this hook
+	- Very rarely used
+	- No causing http calls etc
+
+2. shouldComponentUpdate(nextProps, nextState)
+	- Decide whether a component should update or not - may cancel comp update
+	- Powerful as it can break the component
+	- Or optimize the component's performance
+
+3. render()
+
+4. Update child components
+	- All the child components will go through the update lifecycle in same pattern
+
+5. getSnapshotBeforeUpdate(prevProps, prevState)
+	- Used for last minute dom operations
+	- Example getting the scroll position of the user right before update
+	- do not cause side effects (http, timeouts)
+	- return data that can be used in componentDidUpdate
+
+6. componentDidUpdate(prevProps, prevState, snapshot)
+	- Cause side effects
+	- Do not update state synchronously (it will trigged re-render cycle - affects performance)
+	- State can be updated async as a result of a promise (`then` block)
+
+
+useEffect()
+---
+
+- In functional components, we do not have Lifecycle events to manage the component
+- Instead, we have a `useEffect()` from react library as a replacement for the lifecycle events
+
+```
+useEffect(() => {
+	console.log('[Cockpit.js] useEffect');
+	// make an http call
+});
+```
+- The above arrow function will be called at every render cycle
+- In order to make it run only for the first time when the component loads, pass an empty array as the second argument
+```
+useEffect(() => {
+	console.log('[Cockpit.js] useEffect');
+}, []);
+```
+- This will run the function only when this component loads the first time, thus giving the replacement for `componentDidMount`
+- In the array, we can pass some props data. So when that data changes, this function is called at that time, thus giving the replacement for `componentDidUpdate`
+```
+useEffect(() => {
+	console.log('[Cockpit.js] useEffect');
+}, [props.persons]);
+```
+- We can also return a function from the useEffect, that can be used to do some cleanup work when the useEffect runs (but before running the main arrow function), thus giving the replacement for `componentWillUnmount`
+```
+useEffect(() => {
+	console.log('[Cockpit.js] useEffect');
+	return => {
+		console.log('[Cockpit.js] useEffect')
+	}
+}, []);
+```
