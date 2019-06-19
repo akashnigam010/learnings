@@ -12,6 +12,13 @@ const Cockpit = (props) => {
         }
     }, []);
 
+    useEffect(() => {
+        console.log('[Cockpit.js] useEffect 2');
+        return () => {
+            console.log('[Cockpit.js] cleanup 2');
+        }
+    });
+
     const classes = [];
     const buttonStyle = {
         backgroundColor: 'green',
@@ -25,11 +32,11 @@ const Cockpit = (props) => {
         buttonStyle.backgroundColor = 'red';
     }
 
-    if (props.persons.length <= 2) {
+    if (props.personsLength <= 2) {
         classes.push('red');
     }
 
-    if (props.persons.length <= 1) {
+    if (props.personsLength <= 1) {
         classes.push('bold');
     }
 
@@ -53,4 +60,4 @@ const Cockpit = (props) => {
     );
 }
 
-export default Cockpit;
+export default React.memo(Cockpit);

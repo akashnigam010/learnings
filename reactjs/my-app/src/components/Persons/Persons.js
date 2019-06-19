@@ -10,12 +10,14 @@ class Persons extends Component {
 
     shouldComponentUpdate(nextProps, nextState) {
         console.log('[Persons.js] shouldComponentUpdate');
-        return true;
+        return nextProps.persons !== this.props.persons;
+        // the above works because when persons change, a copy of persons 
+        // is made and set in the state. see nameChangeHandler in App.js
     }
 
     getSnapshotBeforeUpdate(prevProps, prevState) {
         console.log('[Persons.js] getSnapshotBeforeUpdate');
-        return {'message':'Hello!'}
+        return { 'message': 'Hello!' }
     }
 
     render() {

@@ -60,7 +60,7 @@ const App = props => {
     <div className="App">
       <Cockpit
         title={props.title}
-        persons={personsState.persons}
+        personLength={personsState.persons.length}
         changed={inputChangeHandler}
         inputText={inputText}
         switchView={switchView}

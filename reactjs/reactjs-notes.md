@@ -166,7 +166,7 @@ class App extends Component {
 - React only recognizes 2 changes - state and props
 - In above example, when the state changed, the corresponding `props` being passed into Person component also changed
 
-Functional Components with React Hooks (useState)
+Functional Components with React Hooks (useState) - State Management
 ---
 
 - First we change our class based component to functional component
@@ -531,7 +531,8 @@ Component Lifecycle
 2. shouldComponentUpdate(nextProps, nextState)
 	- Decide whether a component should update or not - may cancel comp update
 	- Powerful as it can break the component
-	- Or optimize the component's performance
+	- Or optimize the component's performance - compare the nextProps.xxx to this.props.xx and if there is a change, only then let the componen update, hence optimizing the app.
+	- **React doesn't always update the whole DOM tree, it compares the old and the new states and if anything has really changed, it updates the changed DOm**
 
 3. render()
 
@@ -550,7 +551,7 @@ Component Lifecycle
 	- State can be updated async as a result of a promise (`then` block)
 
 
-useEffect()
+useEffect() - Lifecycle Management
 ---
 
 - In functional components, we do not have Lifecycle events to manage the component
@@ -585,3 +586,106 @@ useEffect(() => {
 	}
 }, []);
 ```
+
+Component Optimization
+---
+
+**Class based components**
+- Using `shouldComponentUpdate()`, we can optimize our app.
+- Use this method to return `true` only in case of dependant props.state getting updated. 
+
+**Functional components**
+- Simply wrapping the component in `React.memo(...)` keeps the snapshot of the component in memory, and is returned back if the props over which this functional component dependes, doesn't change.
+
+**Important**
+When it is known that the data WILL change in parent and therefore child WILL update, then adding shouldComponentUpdate() or React.memo() will add extra load and slow down the app. So optimize only when it is required.
+
+Pure Component
+---
+
+- In a class based component, we optimize the render cycles using the shouldComponentUpdate
+- In this method, we check if any property or method in the state has changed, then update the component.
+- This check can be long and heacy if we start doing it for all the properties and methods.
+- So instead of manually making these checks, we can simply extend `PureComponent` instead of `Component` from `react`.
+- PureComponent already has shouldComponentUpdate method implemented with all the properties and methods checked for change.
+
+How React updates DOM
+---
+
+Virtual DOM : React keeps a copy of DOM as javascript model in memory called Virtual DOM
+
+- When render method runs, react compares the old virtual DOM to the new Virtual DOM
+- If no difference is found, nothing is done - no changes to the real DOM
+- If a difference is found, react updates only the changed part in the real DOM
+- It is important that react only updates the part that was changed because updating the real DOM is really slow.
+- When a render method runs, it doesn't mean that the real DOM will change.
+- It could be the possibility that the render method did run because some state changed, but finally the new virtual DOM was still same as the old virtual DOM. In such case, react will not update the real DOM.
+
+Rendering adjacent JSX element
+---
+
+**Method 1**
+- On root level, there is only one element allowed in a render method (ex. a <div>)
+- But react allows an array to be returned, as long as all the items have a key (ex. returning props.persons.map(...))
+- So, if instead of a single value, we return an array, we can put adjacent elements in a JSx
+Ex:
+
+render(
+	return [
+		<p key="i1">Hello</p>,
+		<p key="i2">How are you</p>,
+		<p key="i3">Good morning</p>
+	];
+);
+- Only catch is that all the array elements must have a key
+
+**Method 2 - Using Wrapper Component - HOC**
+- Simply wrap your JSX with a HOC or a wrapper compnent
+- React requires us to return just only element as JSX (or array)
+- So we can wrap our JSX element (multiple) in an auxillary component which is called a wrapper or a Higher Order Component and return that.
+- By doing this, we do not have to add any extra divs to our JSX
+
+Ex:
+1. Declare a HOC
+```
+const Auxillary = props => props.children;
+export default Auxillary
+```
+- No need to import `React` because we do not return any JSX from an hoc
+- `children` is a property of props and hoc returns `props.childeren`, meaning - return anything between the opening and the closing tag of the hoc
+
+2. Use it to wrap the JSX
+```
+render() {
+	return (
+		<Auxillary>
+			<p>Hello</p>
+			<p>How are you</p>
+			<p>Good morning</p>
+		</Auxillary>
+	);
+}
+```
+- key is not required now since it is not being returned as an array
+
+**Method 3 - Using React.Fragment - HOC**
+
+- Use built in HOC for the same purpose `React.Fragment`
+Ex:
+```
+import { Fragment } from 'react';
+render() {
+	return (
+		<Fragment>
+			<p>Hello</p>
+			<p>How are you</p>
+			<p>Good morning</p>
+		</Fragment>
+	);
+}
+```
+
+HOC
+---
+
+HOCs are a cross-cutting way to add features to a component by wrapping it.
