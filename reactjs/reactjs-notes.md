@@ -724,6 +724,11 @@ export default withClass(Person);		// wrapping a component to return an enhanced
 
 - Do not mutate the Wrapped Component inside an HOC, because then the Wrapped Component has a dependant business logic on HOC and it can't be used independantly
 
+**Important**
+
+- HOCs are built on Compositional Design Pattern (as opposed to Inheritence based) 
+- We start with a minimalist component and keep growing it by adding more features to it using HOC and finally end up with a full fledged app
+- This approach is compositional in nature as opposed to regular OOP design of creating a container first and then creating children - Inheritence based architecture.
 
 Setting State Correctly
 ---
