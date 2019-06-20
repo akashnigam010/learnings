@@ -914,3 +914,100 @@ const Person = props => {
 	);
 }
 ```
+
+useEffect Hook
+---
+
+- `useEffect` lets us perform side-effects in a functional component
+- It is a combination of `componentDidMount, componentDidUpdate and componentWillUnmount`
+- It provides a way to put the cleanup logic along with the subscription logic and guarantees the cleanup after a prop has changed
+- Comparing this to class based componentDidMount and componentWillUnmount, we have to split the related code into 2 different lifecycle methods
+- If a prop has changed, componentDidUpdate needs to be implemented, or we end up having bugs - stale state being shown
+- In useEffect, React will automatically re-render and clean up the last prop state with a new one.
+- In class based lifecycle comps, we can optimize the render cycle using `shouldComponentUpdate`, in useEffect, it is built right into it as a second argument
+- Pass a second argument to tell React to render this only when the argument is updated.
+- Passing an empty [] as a second argument essentially renders it only on the first render.
+
+There are 2 effects
+1. Effects without cleanup - example: DOM update, network calls, log statements
+	These effects do not require cleanup and therefor, useEffect do not need to return a cleanup function
+2. Effects with cleanup - example: subscription to an external data source
+	These effects need to cleanup the subscription when re-render happens to avoid memory leak and crash at runtime
+
+- In class based components, unrelated code ends up in a single method since there could only be one `componentDidUpdate, componentDidMount or componentWillUnmount`
+- We can use useEffect multiple times since it is only a function call. And by doing this, we can club the related code in a single use of useEffect.
+Ex:
+```
+function FriendStatus = props => {
+	const [isOnline, setIsOnline] = useState(null);
+
+	useEffect(() = {
+		function handleStatusChange(status) {
+			setIsOnline(status.isOnline);
+		}
+
+		ChatAPI.subscribeToFriendStatus(props.friend.id, handleStatusChange);
+		// cleanup
+		return () => {
+			ChatAPI.unsubscribeToFriendStatus(props.friend.id, handleStatusChange);
+		}
+	});
+
+	return (
+		isOnline ? 'Online' : 'Offline'
+	);
+}
+```
+
+Custom Hooks
+---
+
+- Hooks are functions that let us `hook into` React state and lifecycle features from functional components
+- Hooks are a way to reuse stateful logic, not state itself
+- Building our own hooks lets us extract a component logic into reusable functions
+- A custom Hook is a JavaScript function whose name starts with `use` and that may call other Hooks
+
+- For the above example - `FriendStatus`, we can extract the state logic into a hook and then reuse it across multiple components
+
+*Creating the hook*
+```
+const useFriendStatus = (friendId) => {
+	const [isOnline, setIsOnline] = useState(null);
+
+	useEffect(() = {
+		function handleStatusChange(status) {
+			setIsOnline(status.isOnline);
+		}
+
+		ChatAPI.subscribeToFriendStatus(props.friend.id, handleStatusChange);
+		// cleanup
+		return () => {
+			ChatAPI.unsubscribeToFriendStatus(props.friend.id, handleStatusChange);
+		}
+	});
+
+	return isOnline;
+}
+```
+*Using in FriendStatus*
+```
+function FriendStatus = props => {
+	const isOnline = useFriendStatus(props.friend.id);
+
+	return (
+		isOnline ? 'Online' : 'Offline'
+	);
+}
+```
+*Using in FriendListItem* - another component
+```
+const FriendListItem = props => {
+	const isOnline = useFriendStatus(props.friend.id);
+
+	return (
+		<li style={{color: isOnline ? 'green' : 'red'}}>
+			{props.friend.name}
+		</li>
+	);
+}
+```
