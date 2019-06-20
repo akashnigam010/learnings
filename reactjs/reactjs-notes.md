@@ -1011,3 +1011,41 @@ const FriendListItem = props => {
 	);
 }
 ```
+
+Render Props
+---
+
+- Render props is another method to share data between components, without manually passing props from one component to another - in a cross cutting way
+- Instead of hardcoding a component inside a component, and effectively changing the rendered output, we can provide a function prop that is used to dynamically determine what to render.
+Ex:
+```
+const Cat = props => {
+	const [x, y] = props.mouse;
+	return (
+		<img src='...' style={{position: absolute, left: x, top: y}} />
+	);
+}
+
+const Mouse = props => {
+	const [x, setX] = useState(0);
+	const [y, setY] = useState(0);
+
+	handleMouseMove = (event) => {
+		setX(event.clientX);
+		setY(event.clientY);
+	}
+	return (
+		<div onMouseMove={handleMouseMove}>
+			{props.render(x, y)}
+		</div>
+	);
+}
+
+const MouseTracker = props => {
+	return (
+		<Mouse render={(x, y) => (
+			<Cat x={x}, y={y} />
+		)} />
+	);
+}
+```

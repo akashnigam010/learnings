@@ -71,3 +71,6 @@ const mapDispatchToProps = dispatch => {
 
 export default connect(mapStateToProps, mapDispatchToProps)(Counter);
 ```
+
+- In a reducer, we must not mutate the original state of the store, instead create a copy of the state, update it and return it
+- Redux then updates this new state to the old state
