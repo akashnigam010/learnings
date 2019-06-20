@@ -74,3 +74,11 @@ export default connect(mapStateToProps, mapDispatchToProps)(Counter);
 
 - In a reducer, we must not mutate the original state of the store, instead create a copy of the state, update it and return it
 - Redux then updates this new state to the old state
+
+Design Patterns
+---
+
+Redux uses `Singleton Pattern` and `Observer Pattern` to manage `immutable state` and allow subscription to `observing components`
+
+- State Tree uses Singleton Pattern
+- `connect()` method uses observer pattern (components get updated when state changes)
