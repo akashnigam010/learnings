@@ -557,7 +557,7 @@ useEffect() - Lifecycle Management
 ---
 
 - In functional components, we do not have Lifecycle events to manage the component
-- Instead, we have a `useEffect()` from react library as a replacement for the lifecycle events
+- Instead, we have a `useEffect()` React hook from react library as a replacement for the lifecycle events
 
 ```
 useEffect(() => {
@@ -627,11 +627,11 @@ Rendering adjacent JSX element
 ---
 
 **Method 1**
-- On root level, there is only one element allowed in a render method (ex. a <div>)
+- On root level, there is only one element allowed in a render method (ex. a div)
 - But react allows an array to be returned, as long as all the items have a key (ex. returning props.persons.map(...))
-- So, if instead of a single value, we return an array, we can put adjacent elements in a JSx
+- So, if instead of a single value, we return an array, we can put adjacent elements in a JSX
 Ex:
-
+```
 render(
 	return [
 		<p key="i1">Hello</p>,
@@ -639,6 +639,7 @@ render(
 		<p key="i3">Good morning</p>
 	];
 );
+```
 - Only catch is that all the array elements must have a key
 
 **Method 2 - Using Wrapper Component - HOC**
