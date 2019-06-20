@@ -14,3 +14,4 @@ MobX work flow:
 4. *Actions*
 	Actions cause the state change. MobX makes sure that actions are translated to state change and corresponding derivations and reactions run synchronously
 
+In MobX, components do not need to manually subscribe to the state changes, infact MobX does that job for us by keeping Observables and thus creating smart components which re-render whenever state changes
