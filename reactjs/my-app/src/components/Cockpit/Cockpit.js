@@ -1,12 +1,19 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef, useContext } from 'react';
 import Validation from '../Validation/Validation';
 import Char from '../Char/Char';
-import './Cockpit.css';
+import classes from './Cockpit.css';
+import AuthContext from '../../context/auth-context';
 
 const Cockpit = (props) => {
 
+    const btnClickRef = useRef(null);
+    const authContext = useContext(AuthContext);
+
+    console.log(authContext.authenticated);
+
     useEffect(() => {
         console.log('[Cockpit.js] useEffect');
+        btnClickRef.current.click();
         return () => {
             console.log('[Cockpit.js] cleanup');
         }
@@ -19,7 +26,7 @@ const Cockpit = (props) => {
         }
     });
 
-    const classes = [];
+    const assignedClasses = [];
     const buttonStyle = {
         backgroundColor: 'green',
         color: 'white',
@@ -33,17 +40,17 @@ const Cockpit = (props) => {
     }
 
     if (props.personsLength <= 2) {
-        classes.push('red');
+        assignedClasses.push(classes.red);
     }
 
     if (props.personsLength <= 1) {
-        classes.push('bold');
+        assignedClasses.push(classes.bold);
     }
 
     return (
         <div>
             <h1>{props.title}</h1>
-            <p className={classes.join(' ')}>Assignment Input</p>
+            <p className={assignedClasses.join(' ')}>Assignment Input</p>
             <input onChange={props.changed} value={props.inputText} />
             <p>Length: {props.inputText.length}</p>
             <Validation length={props.inputText.length} />
@@ -55,7 +62,13 @@ const Cockpit = (props) => {
                 })
             }
             <br />
-            <button style={buttonStyle} onClick={props.switchView}>Toggle</button>
+            <button
+                ref={btnClickRef}
+                style={buttonStyle}
+                onClick={props.switchView}>
+                Toggle
+            </button>
+            <button onClick={authContext.login}>Login</button>
         </div>
     );
 }

@@ -169,6 +169,8 @@ class App extends Component {
 Functional Components with React Hooks (useState) - State Management
 ---
 
+*Hooks are functions that let us “hook into” React state and lifecycle features from function components*
+
 - First we change our class based component to functional component
 - `state` and `setState` are not available in a functional component, therefore we use `useState` react hook to manage state of such compoent
 - `useState` return an array with exactly 2 elements
@@ -688,4 +690,226 @@ render() {
 HOC
 ---
 
-HOCs are a cross-cutting way to add features to a component by wrapping it.
+- HOCs are a cross-cutting way to add features or business logic to components by wrapping them
+- **They take in a component and return an enhanced component**
+- Conventionally, defined with a `with` keyword example - withClass.
+- Defined in such a way that they can be reused across multiple components
+- Used in such a way that the component should be reusable even without the HOC
+- Are defined as normal javascript functions taking 1 or more arguments
+	- The first argument is the Wrapped Component - that needs to be wrapped
+	- Other arguments depend on what business logic we are adding in the HOC
+Ex:
+```
+const withClass = (WrappedComponent, classes) => {
+	return props => {
+		<div className={classes}>
+			<WrappedComponent {...props} />
+		</div>
+	}
+}
+
+export default withClass;
+```
+Usage:
+```
+const Person = props => {
+	return (
+		<p>I am a person</p>
+	);
+}
+
+export default withClass(Person);		// wrapping a component to return an enhanced comp
+```
+
+- Do not mutate the Wrapped Component inside an HOC, because then the Wrapped Component has a dependant business logic on HOC and it can't be used independantly
+
+
+Setting State Correctly
+---
+
+- When we want to update state, and the new value is dependant on old value, never use 
+`this.setState({val: this.state.val + 1});`
+- Because it is not for certain that the state will be upudated after this statement.
+- React will register this update and will change the actual state as and when resources are available.
+- Therefore, whenever such situation arises, set state by passing the new state with a callback function
+Ex:
+```
+this.setState((prevState) => {
+	return {
+		val: prevState.val + 1 
+	}
+});
+```
+
+PropTypes
+---
+
+Additional library to define what are the types of props a component uses
+Ex:
+```
+import PropType from 'prop-types';
+.
+.
+.
+Person.propTypes = {
+	clicked: ProTypes.func,
+	name: PropTypes.string
+};
+
+export default Person;
+```
+
+Refs
+---
+
+- To get hold of a HTML/JSX element, we can use `ref` attribute.
+- We can then manipulate the element in different part of our app.
+Ex:
+```
+class Person extends Component {
+	constructor(props) {
+		super(props);
+		this.inputElementRef = React.createRef();
+	}
+
+	componentDidMount() {
+		this.inputElementRef.current.focus();
+	}
+
+	render() {
+		return (
+			<input ref={this.inputElementRef}>
+		);
+	}
+}
+```
+
+Refs in functional components
+---
+
+We can do the same thing in functional components using `useRef` hook along with `useEffect` hook.
+Ex:
+```
+const Cockpit = props => {
+	const btnClickRef = useRef(null);
+
+	useEffect(() => {
+		btnClickRef.current.click();
+	}, []);
+
+	return (
+		<button ref={btnClickRef} />
+	);
+
+};
+```
+
+Prop chain problem
+---
+
+Passing state from a component up in the component heirarcy down to other components, there is a lot of redundancy and margin of error. This is called Prop chain problem.
+This is taken care in React by using Context API.
+
+
+Context API
+---
+
+- Context provides a way to pass data through the component tree without having to pass props down manually at every level.
+- React allows us to create a context object to pass any data to the component tree without passing from one component to another.
+- Thus a context object can be said to be a globally available object that can be accessed across the component tree.
+- Makes use 
+	- `React.createContext()` - to create a context object, 
+	- `Provider` to set up the provider and wrap the JSx that needs this context obj 
+	- `Consumer` to use the context object in a component
+
+Ex:
+1. Create a context object
+```
+import React from 'react';
+const AuthContext = React.createContext({
+	authenticated: false,
+	login = () => { }
+});
+export default AuthContext;
+```
+
+2. Add Provider
+```
+import AuthContext from '../../context/auth-context';
+const App = props => {
+	const [authenticated, setAuthenticated] = useState(false);	// false by default
+	loginHandler = () => {
+		setAuthenticated(!authenticated);		// toggling authenticated
+	}
+
+	return (
+		<div>
+			<AuthContext.Provider value={{authenticated: authenticated, login: loginHandler}}>
+				<Child1 />		
+				<Child2 />
+			</AuthContext.Provider>		// Child1 & Child2 depend upon the context ob
+				<Child3 />				// Child3 doesn't depend on it
+		</div>
+	);
+}
+```
+
+3. Consume
+*Child 1*
+```
+const Child1 = props => {
+	return (
+		<AuthContext.Consumer>
+			{(context) => context.authenticated ? <p>Logged In</p> : <p>Please Log In</p>}
+		</AuthContext.Consumer>
+	);
+}
+```
+*Child 2*
+```
+const Child2 = props => {
+	return (
+		<AuthContext.Consumer>
+			{(context) => <button onClick={context.login}>Login</button>}
+		</AuthContext.Consumer>
+	);
+}
+```
+
+ContextType and useContext
+---
+
+- If we need to use the context object outside our JSX code, we couldn't, because we use it by <AuthContext.Consumer>
+- We can do it by making use of static `contextType` in a class based component or `useContext` hook in a functional component.
+
+*ContextType*
+Ex:
+```
+class Person extends Component {
+	static contextType = AuthContext;		// need to define this
+	componentDidMount() {
+		console.log(this.context.authenticated);	// react provides this.context
+	}
+
+	render() {
+		return (
+			{this.context.authenticated? <p>LoggedIn</p> : <p>Login pls</p>}
+		);
+	}
+}
+```
+- In above example, we need to define a `static` property in our class based component with the name `contextType`.
+- By doing that, react provides us with a `context` object in our class that will hold the context object.
+
+*useContext*
+Ex:
+```
+const Person = props => {
+	const authContext = useContext(AuthContext);
+	console.log(authContext.authenticated);
+
+	return (
+		<button onClick={authContext.login}>Login</button>
+	);
+}
+```

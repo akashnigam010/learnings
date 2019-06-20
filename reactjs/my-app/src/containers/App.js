@@ -1,11 +1,15 @@
 import React, { useState } from 'react';
-import './App.css';
+import classes from './App.css';
 import Persons from '../components/Persons/Persons';
 import Cockpit from '../components/Cockpit/Cockpit';
+import withClass from '../hoc/withClass';
+import AuthContext from '../context/auth-context';
 
 const App = props => {
 
   const [showDiv, setShowDiv] = useState(false);
+
+  const [authenticated, setAuthenticated] = useState(false);
 
   const [personsState, setPersonsState] = useState({
     persons: [
@@ -46,6 +50,10 @@ const App = props => {
 
   }
 
+  const loginHandler = () => {
+    setAuthenticated(!authenticated);
+  }
+
   let persons = null;
   if (showDiv) {
     persons = <div>
@@ -57,18 +65,20 @@ const App = props => {
   }
 
   return (
-    <div className="App">
-      <Cockpit
-        title={props.title}
-        personLength={personsState.persons.length}
-        changed={inputChangeHandler}
-        inputText={inputText}
-        switchView={switchView}
-        showDiv={showDiv}
-        clicked={deleteElementHandler} />
-      {persons}
-    </div>
+    <React.Fragment>
+      <AuthContext.Provider value={{ authenticated: authenticated, login: loginHandler }}>
+        <Cockpit
+          title={props.title}
+          personsLength={personsState.persons.length}
+          changed={inputChangeHandler}
+          inputText={inputText}
+          switchView={switchView}
+          showDiv={showDiv}
+          clicked={deleteElementHandler} />
+        {persons}
+      </AuthContext.Provider>
+    </React.Fragment >
   );
 }
 
-export default App;
+export default withClass(App, classes.App);
