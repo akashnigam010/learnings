@@ -279,3 +279,42 @@ app.use(express.static('public'));
 - By adding above middleware, our static files in `public` folder will be accessible directly
 Ex: `http://localhost:3000/readme.txt` will serve a static file `readme.txt` inside public folder
 
+Routing in Express
+---
+
+- use app.get(), post(), put() and delete() to provide basic routing
+- use app.route() to define chained routing
+    Ex:
+    ```
+    app.route('/book')
+        .get((req, res) => { ... })
+        .post((req, res) => { ... })
+        .put((req, res) => { ... })
+        .delete((req, res) => { ... })
+    );
+    ```
+- use `express.Router()` for modular route handlers
+    Ex:
+    *birds.js*
+    ```
+    const express = require('express');
+    const router = express.Router();
+    router.use( // some middlware );
+    router.get('/', (req, res) => { ... });
+    router.get('/about', (req, res) => { ... });
+    modules.export = router;
+    ```
+    *index.js*
+    ```
+    const birds = require('./birds');
+    app.use('/birds', birds);
+    ```
+
+Third Party Middleware
+---
+
+- `debug` - for debugging application - adding log statements
+- `morgan` - for logging http requests and responses
+- `helmet` - for adding http headers
+etc
+
