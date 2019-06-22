@@ -173,6 +173,7 @@ HTTP module
 
 - For creating server and listening to new connections, requests
 - Create a server and listen to requests
+
 ```
 const http = require('http');
 const server = http.createServer((req, res) => {
@@ -185,3 +186,94 @@ server.listen(3000, () => {
 ```
 - `createServer()` is a method that returns a server object which is an event emitter
 - So methods like `on()`, `addListener()` are available to use
+
+NPM
+---
+
+*Resolving a module*
+```
+const _ = require('underscore');
+
+// Core module
+// File or folder
+// node_modules
+```
+
+- `require` function first checks this module in the Node Core. If it is not found there,
+- it checks this in the current directory assuming there is a folder named `underscore` and inside that, there is an `index.js` or `underscore.js`. If not found, 
+- it does the same folder check inside `node_nodules` folder
+- if the module is not found anywhere, it throws an error
+
+package-lock.json
+---
+
+Node uses this file to manage the dependancies internally. Shouldn't bother us.
+
+Semantic Versioning
+---
+
+Versioning : Major.Minor.Patch ex. 4.16.5
+
+- Bug fixes - patch version update
+- New features that doesn't break the api - Minor version update
+- New features or bug fixes that might break the existing api - Major version update
+
+Using `Caret` or `Tilde` symbol with version. Ex `^4.16.4` or `~4.16.4`
+
+Meaning, while npm install, npm installs the latest version which has `4` as the major version. Ex. `4.18.2`
+So either use caret or tilde or `x`
+Ex:
+```
+"dependencies" : {
+    "underscore": "^4.16.4"
+}
+
+// or
+
+"dependencies" : {
+    "underscore": "~4.16.4"
+}
+
+// or
+
+"dependencies" : {
+    "underscore": "4.x"
+}
+```
+
+- to force npm to get the exact version - do not use tilde, caret or x
+
+npm list
+---
+
+Lists all dependencies
+`npm list`
+ - without depth: `npm list --depth=0`
+
+See package.json of a dependancy
+---
+
+`npm view underscore`
+
+Dev Dependencies
+---
+
+Ex. dependencies for code bundling, minifying, running unit tests etc
+These must not be shipped with the final product, thus defined in `devDependencies` inside package.json
+
+```
+npm install jshint --save-dev
+```
+
+Uninstall
+---
+
+`npm uninstall underscore`
+
+Cluster Module
+---
+
+- Node is by default single threaded, meaning it runs in a single runs even on a multicore processor
+- We can configure it though to run with multiple threads using Cluster Module
+- Using cluster will have more than one threads (node worker processes) running in parallel per core, all load balanced internally by cluster module.
+- Each worker process will have its own event loop and memory space
