@@ -277,3 +277,23 @@ Cluster Module
 - We can configure it though to run with multiple threads using Cluster Module
 - Using cluster will have more than one threads (node worker processes) running in parallel per core, all load balanced internally by cluster module.
 - Each worker process will have its own event loop and memory space
+
+Event Loop In Node vs Event Loop in Browsers
+---
+
+- Event loop is used in both browsers and Node for doing non-blocking asynchronous operations.
+- Both use Google's V8 engine to run javascript
+- Browser provides WebAPIs, Event Queue and Event Loop
+- Node provides Kernel APIs, Event Queue and Event Loop using libuv library written in C
+
+*Even Loop working*
+
+- When the main thread encounters a blocking operation (with a callback function), instead of pushing it on the main call stack, it is pushed to the WebAPI stack in browsers and Kernel stack in Node where these operations occur and the main process continues to run other instructions
+- When the blocking operation happens (timeOut occurred, http call returned, click occurred), the callback function associated with these operation is pushed to the event queue
+- Now if the main call stack is still executing, it will continue until it is empty and then Event Loop will see if a callback is present at the event queue to be processed yet.
+- If yes, that callback function will be pushed to the call stack and executed.
+
+**Important**
+- In Node, the synchronous operation is provided to kernal API, which will run it using system's API, which could be multithreaded (using C - libuv)
+- Whereas in browser, the WebAPI handles the sync operation and not the system kernel
+- There is not a single stack to keep all the synchronous operations but it is divided in many phases like - timeout, ajax, i/o etc.
