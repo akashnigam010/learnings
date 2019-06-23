@@ -297,3 +297,125 @@ Event Loop In Node vs Event Loop in Browsers
 - In Node, the synchronous operation is provided to kernal API, which will run it using system's API, which could be multithreaded (using C - libuv)
 - Whereas in browser, the WebAPI handles the sync operation and not the system kernel
 - There is not a single stack to keep all the synchronous operations but it is divided in many phases like - timeout, ajax, i/o etc.
+
+Callback Functions
+---
+
+```
+console.log('Before');
+getUser((user) => {
+    console.log(user);
+});
+console.log('After');
+function getUser(fn) {
+    setTimeout(() => {
+        fn({ id: 1, name: 'Akash' });
+    }, 2000);
+}
+```
+
+Callback Hell
+---
+
+```
+getUser(1, (user) => {
+    getRepositories(user.id, (repos) => {
+        getCommits(repos[0].id, (commits) => {
+            displayCommits(commits) {
+                console.log(commits);
+            }
+        });
+    });
+});
+```
+
+- Such code keeps getting nested and causing a callback hell.
+
+Named Functions
+---
+
+- To resove a callback hell, we can use Named Functions
+- We do not call the functions, instead just pass them as a param
+
+```
+getUser(1);
+
+function getUser(id) {
+    return getUser(id, getRepositories)
+}
+
+function getRepositories(user) {
+    return getRepositories(id, getCommits);
+}
+
+function getCommits(repos) {
+    return getCommits(repose, displayCommits);
+}
+
+function displayCommits(commits) {
+    console.log(commits);
+}
+```
+
+Promise
+---
+
+- A promise is an object that holds the eventual result of an asynchronous operation
+- It will hold either a value or an error
+- A promise has 3 states :
+    - PENDING
+    - RESOLVED
+    - REJECTED
+
+```
+const p = new Promise((resolve, reject) => {
+    setTimeout(() => {
+        reject(new Error('error occurred'));
+    }, 2000);
+});
+
+p.then(response => console.log('Resolved', response))
+    .catch(err => console.log('Rejected', err.message));
+
+console.log('Hello World');
+```
+
+- `then and catch` are non blocking
+- Either a promise gets resolved or rejected
+
+Callback hell solved with Promises
+---
+
+```
+getUser(1)
+    .then(user => getRepositories(user))
+    .then(repos => getCommits(repos))
+    .then(commits => console.log(commits))
+    .catch(err => console.log(err.message));
+```
+
+- If any promise returns error, the single error handler will handle it
+
+Async/Await
+---
+
+- Async await is a syntactical sugar around promises and make the code look synchronous and thus easy to read
+
+```
+async function displayCommits() {
+    try {
+        const user = await getUser(1);
+        const repos = await getRepositories(user);
+        const commits = await getCommits(repos);
+        console.log(commits);
+        console.log('Hi');
+    } catch (err) {
+        console.log(err.message)
+    }
+}
+displayCommits();
+```
+
+- JS requires to wrap the await statements in an async function, which needs to be called later
+- Whole method becomes synchronous. last statement of console.log('Hi') also waits for the code above to execute first
+

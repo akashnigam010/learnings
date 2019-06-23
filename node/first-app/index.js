@@ -1,6 +1,6 @@
 const express = require('express');
-const logger = require('./logger');
-const authenticate = require('./authenticator');
+const logger = require('./middleware/logger');
+const authenticate = require('./middleware/authenticator');
 const home = require('./routes/home');
 const customers = require('./routes/customers');
 const app = express();  // top level function exported by express module

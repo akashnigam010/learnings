@@ -316,5 +316,68 @@ Third Party Middleware
 - `debug` - for debugging application - adding log statements
 - `morgan` - for logging http requests and responses
 - `helmet` - for adding http headers
+- `bcrypt` - for hashing passwords
 etc
+
+Authentication using JWTs
+---
+
+- Use `jsonwebtoken` to create a new JWT, and return it on login/register
+- Create a middleware `auth` that checks for the validity of a request by extracting the `x-auth-token` in the headers
+- ON protected routes, add this new middleware.
+- If the token is invalid, return a bad request 400
+- If the token is valid, pass control to next middleware - that is the processing callback of the route
+
+*auth.js* middleware
+```
+const jwt = require('jsonwebtoken');
+const config = require('config');   
+function auth(req, res, next) {
+    const token = req.header('x-auth-token');
+    if (!token) return res.status(401).send('No token provided');
+
+    try {
+        const decode = jwt.verify(token, config.get('jwtKey'));
+        req.user = decoded;
+        next();
+    } catch (err) {
+        return res.status(400).send('Invalid token');
+    }
+}
+```
+
+*customer.js*
+```
+const auth = require('./middleware/auth');
+const express = require('express');
+const app = express();
+const route = express.Route();
+route.get('/', (req, res) => { ... });          // unprotected route
+route.post('/', auth, (req, res) => { ... });   // protected route
+```
+
+Authentication VS Authorization
+---
+
+- Authentication means verifying if the the user is really who he claims to be
+- Authorization means verifying if a user has permissions to access a resource
+- We do authentication by verifying user credentials stored against it in the database
+- We perform authorization by pulling user data out of the jwt and verifying against the roles a particular resource is configured to get access to
+
+Role based auth
+---
+
+- Add another middleware that checks for `isAdmin` or any other role
+- Add this middleware to a route along with the `auth` middleware
+
+```
+function (req, res, next) {
+    if (!req.user.isAdmin) return res.send(403).send('Access denied');
+    next();
+}
+.
+.
+.
+route.delete('/', [auth, admin], (req, res) => { ... });
+```
 
