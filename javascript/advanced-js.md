@@ -462,3 +462,16 @@ greeting.call(customer2, ['Hello', 'How are you?']);				// logs Hello! Nat How a
 
 - Call and Apply are interchangable and we can decide what to use - comma based args or array based
 - Bind always returns a function which nees to be called later.
+
+Classes in JS
+---
+
+- Classes are the syntactic sugar to Constructor Functions and Prototypes
+- Instances are created by using `new` keyword, just like Constructor Functions
+- A class can not be instantiated without a new keyword
+- If no constructor is defined, a default constructor is automatically added by js
+- **Class declarations are not hoisted**. Meaning we can not use a class before it is defined
+- A class can not have more than one constructor
+- Static methods are defined by static keyword
+- **Static method can not be called by instances**
+- Getter and Setter - defined by `get & set` keywords

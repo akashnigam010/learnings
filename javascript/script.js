@@ -49,3 +49,26 @@ var john = {
 };
 
 john.hello();
+
+class Vehicle {
+	constructor(make, model) {
+		this.make = make;
+		this.model = model;
+	}
+
+	getMake() {
+		return this.make;
+	}
+
+	getModel() {
+		return this.model;
+	}
+
+	static vroom = function() {
+		console.log('vroooooom');
+	}
+}
+
+const corolla = new Vehicle('Toyota', 2018);
+console.log(corolla.getMake(), corolla.getModel());
+console.log(Vehicle.vroom());
