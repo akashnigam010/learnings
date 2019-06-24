@@ -15,3 +15,10 @@ MobX work flow:
 	Actions cause the state change. MobX makes sure that actions are translated to state change and corresponding derivations and reactions run synchronously
 
 In MobX, components do not need to manually subscribe to the state changes, infact MobX does that job for us by keeping Observables and thus creating smart components which re-render whenever state changes
+
+Redux Vs MobX
+---
+
+- Redux has single store, MobX can have multiple stores, thus we can logically group our data in MobX
+- Redux store state as a plain js object, whereas MobX stores it as an Observable object. We can listen to an observable and track our changes, whereas in Redux, we have to do it manually
+- Redux has immutable state object and thus we can easily revert back to previous state, whereas MobX doesn't maintain immutability
