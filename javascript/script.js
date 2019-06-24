@@ -72,3 +72,12 @@ class Vehicle {
 const corolla = new Vehicle('Toyota', 2018);
 console.log(corolla.getMake(), corolla.getModel());
 console.log(Vehicle.vroom());
+
+var akash = {
+	name: 'Akash',
+	asd: function() {
+		console.log(this);
+	}
+};
+
+console.log(akash.asd());

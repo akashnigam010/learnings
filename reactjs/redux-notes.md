@@ -82,3 +82,6 @@ Redux uses `Singleton Pattern` and `Observer Pattern` to manage `immutable state
 
 - State Tree uses Singleton Pattern
 - `connect()` method uses observer pattern (components get updated when state changes)
+
+Redux in Functional Component?
+---
