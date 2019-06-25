@@ -1054,3 +1054,43 @@ const MouseTracker = props => {
 	);
 }
 ```
+
+Webpack
+---
+
+- Webpack is a static module bundler
+- In a react app created with `create-react-app` cli, webpack is automatically included and configured
+- Webpack bundles our dependant JS files (or html, css) into a single `bundle.js`  (name could be anything) which can then be plugged in as a single dependancy into our html
+- In production mode, it also minifies the bundle.js to speed up the loading process
+
+Babel
+---
+
+- Babel is a javascript compiler that transforms next gen Javascript (ESNext) into older versions so that all browsers can understand it.
+
+React.Lazy and Suspense
+---
+
+- When we want to load a component lazily (only when it is rendered), we can make use of `React.Lazy` for dynamic loading.
+- Simply add a lazy import 
+
+```
+const XyzComponent = React.lazy(() => import('/.XyZComponent'));
+return (
+	<div>
+		<XyzComponent />
+	</div>
+);
+```
+
+- We can show a Suspense component while the lazily loaded component loads
+```
+const XyzComponent = React.lazy(() => import('/.XyZComponent'));
+return (
+	<div>
+		<Suspense fallback = "<div>Loading...</div>">
+			<XyzComponent />
+		</Suspense>
+	</div>
+);
+```
