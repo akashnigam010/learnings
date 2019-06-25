@@ -1020,7 +1020,7 @@ const FriendListItem = props => {
 Render Props
 ---
 
-- Render props is another method to share data between components, without manually passing props from one component to another - in a cross cutting way
+- Render props is technique to share code between components using prop whose value is a function
 - Instead of hardcoding a component inside a component, and effectively changing the rendered output, we can provide a function prop that is used to dynamically determine what to render.
 Ex:
 ```
@@ -1052,6 +1052,19 @@ const MouseTracker = props => {
 			<Cat x={x}, y={y} />
 		)} />
 	);
+}
+```
+
+- Concretely, render prop is a function that a component uses to know what to render
+- We can write most of our HOCs using Render Props
+Ex:
+```
+const withMouse = (Component) => {
+	return props => {
+		<Mouse render = { mouse => (
+			<Component mouse={mouse} ...props />
+		)}>
+	}
 }
 ```
 
