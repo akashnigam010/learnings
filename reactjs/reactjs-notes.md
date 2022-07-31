@@ -730,6 +730,41 @@ export default withClass(Person);		// wrapping a component to return an enhanced
 - We start with a minimalist component and keep growing it by adding more features to it using HOC and finally end up with a full fledged app
 - This approach is compositional in nature as opposed to regular OOP design of creating a container first and then creating children - Inheritence based architecture.
 
+Advance HOC usage
+---
+
+- HOCs can be used in 2 flavours
+	- Props Proxy
+	- Inheritence Inversion
+
+#Props Proxy
+
+- What we saw above
+```
+const hoc = WrappedComponent => {
+	return props => {
+		<div>
+			<WrappedComponent ...props />
+		</div>
+	};
+}
+```
+
+##Inheritence Inversion
+```
+const hoc = WrappedComponent => {
+	return class EnhancedComponent extends WrappedComponent {
+		render() {
+			return super.render();
+		}
+	}
+}
+```
+- In this flavour, the `EnhancedComponent` can make use of `WrappedComponent`'s state, props and lifecycle methods and add more on top of those.
+- Using `this`, we can refer to the `WrappedComponent` objcet and then access state and props.
+- While overriding WrappedComponent's lifcycle methods, call super.xxxLifeCycleMethod() in order to keep the parent's functionality intact
+
+
 Setting State Correctly
 ---
 
